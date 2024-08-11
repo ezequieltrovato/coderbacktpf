@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos en Tiempo Real</title>
+    <link rel="stylesheet" href="/path/to/your/css/styles.css">
+</head>
+<body>
+    <h1>Productos en Tiempo Real</h1>
+    <div id="realtime-product-list">
+        {{#each products}}
+        <div class="product">
+            <h2>{{this.name}}</h2>
+            <p>Precio: ${{this.price}}</p>
+            <p>Categoría: {{this.category}}</p>
+            <p>Disponibilidad: {{#if this.available}}Disponible{{else}}No disponible{{/if}}</p>
+            <button onclick="addToCart('{{this._id}}')">Agregar al carrito</button>
+        </div>
+        {{/each}}
+    </div>
+
+    <script src="/path/to/your/js/scripts.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('product-updated', (products) => {
+            const productList = document.getElementById('realtime-product-list');
+            productList.innerHTML = '';
+
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.classList.add('product');
+                productDiv.innerHTML = `
+                    <h2>${product.name}</h2>
+                    <p>Precio: $${product.price}</p>
+                    <p>Categoría: ${product.category}</p>
+                    <p>Disponibilidad: ${product.available ? 'Disponible' : 'No disponible'}</p>
+                    <button onclick="addToCart('${product._id}')">Agregar al carrito</button>
+                `;
+                productList.appendChild(productDiv);
+            });
+        });
+    </script>
+</body>
+</html>
